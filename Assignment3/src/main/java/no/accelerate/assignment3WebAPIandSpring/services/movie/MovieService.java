@@ -6,6 +6,9 @@ import no.accelerate.assignment3WebAPIandSpring.services.CrudService;
 import java.util.Collection;
 
 public interface MovieService extends CrudService<Movie, Integer> {
+
+    /*
     Collection<Movie> findAllByName(String name);
     Collection<Character> getCharacters(int movieId);
+     */
 }

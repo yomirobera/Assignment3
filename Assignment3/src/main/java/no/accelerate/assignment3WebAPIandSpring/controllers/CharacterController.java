@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 /**
  * @RestController is an annotation to define a RESTful API.
  */
 @RestController
-@RequestMapping(path = "api/v1/characters")
+@RequestMapping(path = "api/v1/character")
 public class CharacterController {
     private final CharacterService characterService;
 
@@ -19,9 +21,13 @@ public class CharacterController {
         this.characterService = characterService;
     }
 
+    //Get a collection of characters
     @GetMapping
     public ResponseEntity findAll() {
         return ResponseEntity.ok(characterService.findAll());
     }
+
+    //
+
 
 }

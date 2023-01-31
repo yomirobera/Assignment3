@@ -5,9 +5,12 @@ import no.accelerate.assignment3WebAPIandSpring.models.Movie;
 import no.accelerate.assignment3WebAPIandSpring.repositories.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 
-public class MovieServiceImpl {
+@Service
+public class MovieServiceImpl implements MovieService{
     private final Logger logger = LoggerFactory.getLogger(MovieServiceImpl.class);
 
     private final MovieRepository movieRepository;
@@ -16,11 +19,34 @@ public class MovieServiceImpl {
         this.movieRepository = movieRepository;
     }
 
-    //@Override
+
+    @Override
     public Movie findById(Integer id) {
-        return movieRepository.findById(id).orElseThrow(()
-                -> new MovieNotFoundException(id));
+        return movieRepository.findById(id).get();
     }
 
+    @Override
+    public Collection<Movie> findAll() {
+        return movieRepository.findAll();
+    }
 
+    @Override
+    public Movie add(Movie entity) {
+        return null;
+    }
+
+    @Override
+    public Movie update(Movie entity) {
+        return null;
+    }
+
+    @Override
+    public void deleteById(Integer integer) {
+
+    }
+
+    @Override
+    public boolean exists(Integer integer) {
+        return false;
+    }
 }

@@ -1,10 +1,15 @@
 package no.accelerate.assignment3WebAPIandSpring.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class Franchise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,9 +18,17 @@ public class Franchise {
     private String name;
     private String description;
 
-    //One-to-many relationship between franchises and movie
     @OneToMany(mappedBy = "franchise")
-    private List<Movie> movies;
+    private List<Movie> movie;
 
-    //Getter and setters  ??
+    //Relation between franchise and character..
+
+    /*
+    @JsonGetter("movie")
+    public Integer movieGetter() {
+        if(movie == null)
+            return null;
+        return movie.getId();
+    }
+     */
 }

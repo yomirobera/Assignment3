@@ -4,6 +4,7 @@ import no.accelerate.assignment3WebAPIandSpring.services.CrudService;
 
 import java.util.Collection;
 
+
 public interface CharacterService extends CrudService<Character, Integer> {
 
 

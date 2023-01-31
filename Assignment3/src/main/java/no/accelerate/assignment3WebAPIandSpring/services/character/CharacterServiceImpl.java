@@ -3,9 +3,11 @@ package no.accelerate.assignment3WebAPIandSpring.services.character;
 import no.accelerate.assignment3WebAPIandSpring.repositories.CharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+@Service
 public class CharacterServiceImpl implements CharacterService{
 
     private final Logger logger = LoggerFactory.getLogger(CharacterServiceImpl.class);
