@@ -1,22 +1,26 @@
 package no.accelerate.assignment3WebAPIandSpring.controllers;
 
 import no.accelerate.assignment3WebAPIandSpring.models.Franchise;
+import no.accelerate.assignment3WebAPIandSpring.models.Movie;
 import no.accelerate.assignment3WebAPIandSpring.services.franchise.FranchiseService;
+import no.accelerate.assignment3WebAPIandSpring.services.movie.MovieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "api/v1/franchise")
 public class FranchiseController {
     private final FranchiseService franchiseService;
+    private final MovieService movieService;
 
-
-    public FranchiseController(FranchiseService franchiseService) {
+    public FranchiseController(FranchiseService franchiseService, MovieService movieService) {
 
         this.franchiseService = franchiseService;
+        this.movieService = movieService;
     }
 
     //Get a collection of franchises
@@ -47,13 +51,19 @@ public class FranchiseController {
         return ResponseEntity.noContent().build();
     }
 
-    //Movie in a franchise (Currently not working)
+    //Movie in a franchise
     @GetMapping("{id}/movie")
-    public ResponseEntity getMovie(@PathVariable int id) {
-        return ResponseEntity.ok(franchiseService.getMovie(id));
+    public ResponseEntity <Collection<Movie>>getAllMovie(@PathVariable int id) {
+        return ResponseEntity.ok(franchiseService.findById(id).getMovie());
     }
-    //Characters in a franchise
+
     /*
+    //Characters in a franchise
+    @GetMapping("{id}/character")
+    public ResponseEntity getCharacter(@PathVariable int id) {
+        return ResponseEntity.ok(franchiseService.getCharacter(id));
+    }
+
     @GetMapping("{id}/character")
     public ResponseEntity getCharacter(@PathVariable int id) {
         return ResponseEntity.ok(franchiseService.getCharacter(id));

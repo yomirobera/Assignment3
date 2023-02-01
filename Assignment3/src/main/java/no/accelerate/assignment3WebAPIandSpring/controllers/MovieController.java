@@ -1,13 +1,15 @@
 package no.accelerate.assignment3WebAPIandSpring.controllers;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import no.accelerate.assignment3WebAPIandSpring.models.Franchise;
 import no.accelerate.assignment3WebAPIandSpring.models.Movie;
 import no.accelerate.assignment3WebAPIandSpring.services.movie.MovieService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "api/v1/movie")
@@ -15,14 +17,13 @@ public class MovieController {
     private final MovieService movieService;
 
     public MovieController(MovieService movieService) {
-
         this.movieService = movieService;
     }
 
 
     //Finding all movies
     @GetMapping
-    public ResponseEntity findAll() {
+    public ResponseEntity<Collection<Movie>>getAll() {
         return ResponseEntity.ok(movieService.findAll());
     }
 
@@ -30,5 +31,15 @@ public class MovieController {
     public ResponseEntity findById(@PathVariable int id) {
         return ResponseEntity.ok(movieService.findById(id));
     }
+
+    //Adding a movie
+    @PostMapping
+    public ResponseEntity add(@RequestBody Movie entity) throws URISyntaxException {
+        //Add franchise
+        movieService.add(entity);
+        URI uri = new URI ("api/v1/movie/" + entity.getId());
+        return ResponseEntity.created(uri).build();
+    }
+
 
 }

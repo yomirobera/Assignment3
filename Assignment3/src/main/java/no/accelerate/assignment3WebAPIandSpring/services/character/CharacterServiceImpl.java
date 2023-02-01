@@ -19,13 +19,14 @@ public class CharacterServiceImpl implements CharacterService{
 
 
     @Override
-    public Character findById(Integer integer) {
-
+    public Character findById(Integer id) {
+        //return characterRepository.findById(id).get();
         return null;
     }
 
     @Override
     public Collection<Character> findAll() {
+       // return characterRepository.findAll();
         return null;
     }
 

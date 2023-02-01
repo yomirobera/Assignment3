@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
+
 /**
  * @RestController is an annotation to define a RESTful API.
  */
@@ -23,11 +25,10 @@ public class CharacterController {
 
     //Get a collection of characters
     @GetMapping
-    public ResponseEntity findAll() {
+    public ResponseEntity<Collection<Character>> getAll() {
         return ResponseEntity.ok(characterService.findAll());
     }
 
     //
-
 
 }

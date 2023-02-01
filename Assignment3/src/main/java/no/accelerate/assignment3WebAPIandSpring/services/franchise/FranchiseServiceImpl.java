@@ -20,7 +20,6 @@ public class FranchiseServiceImpl implements FranchiseService {
 
     @Override
     public Franchise findById(Integer id) {
-
         return franchiseRepository.findById(id).get();
     }
 
@@ -44,12 +43,17 @@ public class FranchiseServiceImpl implements FranchiseService {
     public void deleteById(Integer id) {
         franchiseRepository.deleteById(id);
     }
-    @Override
-    public Movie getMovie(int franchise_id) {
-        return (Movie) franchiseRepository.findById(franchise_id).get().getMovie();
-    }
+
 
     /*
+    //getting a character in a franchise
+    @Override
+    public Character getCharacter(int franchise_id) {
+        return franchiseRepository.findById(franchise_id).get().getCharacter();
+    }
+
+
+
     //get a character in a franchise
     @Override
     public Character getCharacter(int franchise_id) {
@@ -60,5 +64,10 @@ public class FranchiseServiceImpl implements FranchiseService {
     @Override
     public boolean exists(Integer integer) {
         return false;
+    }
+
+    @Override
+    public Collection<Movie> getMovie(int franchise_id) {
+        return franchiseRepository.findById(franchise_id).get().getMovie();
     }
 }

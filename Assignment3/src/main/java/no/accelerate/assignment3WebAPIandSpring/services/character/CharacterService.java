@@ -7,5 +7,4 @@ import java.util.Collection;
 
 public interface CharacterService extends CrudService<Character, Integer> {
 
-
 }

@@ -1,10 +1,13 @@
 package no.accelerate.assignment3WebAPIandSpring.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -21,11 +24,20 @@ public class Movie {
     private String picture;
     private String trailer;
 
-    //One-to-many relationship between franchises and movie
 
+
+
+    //many-to-one relationship between franchises and movie
     @ManyToOne
     @JoinColumn(name = "franchise_id")
     private Franchise franchise;
+
+    @JsonGetter("franchise")
+    public Integer jsonGetFranchise() {
+        if(franchise !=null)
+            return franchise.getId();
+        return null;
+    }
     /**
      * Many-to-many relationship between character and movie entities
      * The relationship is called "character_movie"
@@ -35,6 +47,15 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "character_id"))
     private List<Character> character;
+
+    //Data access - cyclic reference
+    @JsonGetter("character")
+    public List<Integer> jsonGetCharacter() {
+        if(character !=null)
+            return character.stream().map(s->s.getId())
+                    .collect(Collectors.toList());
+        return null;
+    }
 
 
 
