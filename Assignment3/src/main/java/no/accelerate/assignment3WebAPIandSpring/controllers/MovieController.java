@@ -1,6 +1,7 @@
 package no.accelerate.assignment3WebAPIandSpring.controllers;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import no.accelerate.assignment3WebAPIandSpring.models.Character;
 import no.accelerate.assignment3WebAPIandSpring.models.Franchise;
 import no.accelerate.assignment3WebAPIandSpring.models.Movie;
 import no.accelerate.assignment3WebAPIandSpring.services.movie.MovieService;
@@ -41,5 +42,26 @@ public class MovieController {
         return ResponseEntity.created(uri).build();
     }
 
+    //Update Movie
+    @PutMapping("{id}")
+    public ResponseEntity update(@RequestBody Movie entity)  {
+        movieService.update(entity);
+        return ResponseEntity.noContent().build();
+    }
+
+    //Movie in a franchise
+    @GetMapping("{id}/character")
+    public ResponseEntity <Collection<Character>>getAllMovie(@PathVariable int id) {
+        return ResponseEntity.ok(movieService.findById(id).getCharacter());
+    }
+
+    /*
+    //Update character for a movie
+    @PutMapping("{id}/character")
+    public ResponseEntity updateCharacter(@PathVariable int id, @RequestBody int[] CharacterIds) {
+        movieService.updateCharacter(id, CharacterIds);
+        return ResponseEntity.noContent().build();
+    }
+     */
 
 }

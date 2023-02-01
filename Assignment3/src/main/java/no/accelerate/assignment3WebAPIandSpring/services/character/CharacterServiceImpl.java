@@ -1,5 +1,8 @@
 package no.accelerate.assignment3WebAPIandSpring.services.character;
 
+import no.accelerate.assignment3WebAPIandSpring.exceptions.CharacterNotFoundException;
+import no.accelerate.assignment3WebAPIandSpring.exceptions.FranchiseNotFoundException;
+import no.accelerate.assignment3WebAPIandSpring.models.Character;
 import no.accelerate.assignment3WebAPIandSpring.repositories.CharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,24 +23,24 @@ public class CharacterServiceImpl implements CharacterService{
 
     @Override
     public Character findById(Integer id) {
-        //return characterRepository.findById(id).get();
-        return null;
+        return characterRepository.findById(id).orElseThrow(()
+                -> new CharacterNotFoundException(id));
     }
 
     @Override
     public Collection<Character> findAll() {
-       // return characterRepository.findAll();
-        return null;
+       return characterRepository.findAll();
+
     }
 
     @Override
     public Character add(Character entity) {
-        return null;
+        return characterRepository.save(entity);
     }
 
     @Override
     public Character update(Character entity) {
-        return null;
+        return characterRepository.save(entity);
     }
 
     @Override

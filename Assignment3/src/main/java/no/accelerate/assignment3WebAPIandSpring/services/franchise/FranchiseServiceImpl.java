@@ -1,5 +1,6 @@
 package no.accelerate.assignment3WebAPIandSpring.services.franchise;
 
+import no.accelerate.assignment3WebAPIandSpring.exceptions.FranchiseNotFoundException;
 import no.accelerate.assignment3WebAPIandSpring.models.Franchise;
 import no.accelerate.assignment3WebAPIandSpring.models.Movie;
 import no.accelerate.assignment3WebAPIandSpring.repositories.FranchiseRepository;
@@ -20,7 +21,8 @@ public class FranchiseServiceImpl implements FranchiseService {
 
     @Override
     public Franchise findById(Integer id) {
-        return franchiseRepository.findById(id).get();
+        return franchiseRepository.findById(id).orElseThrow(()
+                -> new FranchiseNotFoundException(id));
     }
 
     @Override
@@ -35,31 +37,13 @@ public class FranchiseServiceImpl implements FranchiseService {
 
     @Override
     public Franchise update(Franchise entity) {
-
         return franchiseRepository.save(entity);
     }
 
     @Override
     public void deleteById(Integer id) {
-        franchiseRepository.deleteById(id);
+       franchiseRepository.deleteById(id);
     }
-
-
-    /*
-    //getting a character in a franchise
-    @Override
-    public Character getCharacter(int franchise_id) {
-        return franchiseRepository.findById(franchise_id).get().getCharacter();
-    }
-
-
-
-    //get a character in a franchise
-    @Override
-    public Character getCharacter(int franchise_id) {
-        return (Movie) franchiseRepository.findById(franchise_id).get().getCharacter();
-    }
-     */
 
     @Override
     public boolean exists(Integer integer) {

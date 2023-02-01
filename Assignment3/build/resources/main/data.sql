@@ -25,3 +25,5 @@ INSERT INTO character_movie(movie_id, character_id) VALUES
 (3,3);
 
 
+
+
