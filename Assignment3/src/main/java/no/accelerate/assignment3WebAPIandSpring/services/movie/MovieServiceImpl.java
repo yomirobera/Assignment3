@@ -50,8 +50,8 @@ public class MovieServiceImpl implements MovieService{
     }
 
     @Override
-    public void deleteById(Integer integer) {
-
+    public void deleteById(Integer id) {
+        movieRepository.deleteById(id);
     }
 
     @Override
