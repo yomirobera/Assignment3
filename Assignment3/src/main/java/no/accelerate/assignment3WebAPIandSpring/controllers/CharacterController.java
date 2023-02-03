@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import no.accelerate.assignment3WebAPIandSpring.exceptions.error.ApiErrorResponse;
 import no.accelerate.assignment3WebAPIandSpring.mappers.CharacterMapper;
 import no.accelerate.assignment3WebAPIandSpring.models.Character;
 import no.accelerate.assignment3WebAPIandSpring.services.character.CharacterService;
@@ -43,8 +44,8 @@ public class CharacterController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = @Content
-            )
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
     public ResponseEntity<Collection<Character>> getAll() {
         return ResponseEntity.ok(characterService.findAll());
@@ -66,13 +67,14 @@ public class CharacterController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad Request",
-                    content = @Content
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) }
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = @Content
-            )
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
     public ResponseEntity findById(@PathVariable int id) {
         return ResponseEntity.ok(characterService.findById(id));
@@ -85,8 +87,11 @@ public class CharacterController {
             @ApiResponse(
                     responseCode = "201",
                     description = "Created",
-                    content = @Content
-            )
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Character.class))
+                    })
+
     })
     public ResponseEntity add(@RequestBody Character entity) throws URISyntaxException {
         //Add franchise
@@ -96,7 +101,7 @@ public class CharacterController {
     }
 
     //Update character
-    @PutMapping("{id}")
+    @PutMapping("{id}") // PUT: localhost:8080/api/v1/character/1
     @Operation(summary = "Updates a character with a given id")
     @ApiResponses(value = {
             @ApiResponse(
@@ -138,7 +143,5 @@ public class CharacterController {
         characterService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-
 
 }

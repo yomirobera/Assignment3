@@ -20,4 +20,5 @@ public interface FranchiseService extends CrudService<Franchise, Integer> {
 
      */
 
+    public void updateMovies(int franchise_id, int[] movies);
 }

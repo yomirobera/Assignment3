@@ -1,22 +1,28 @@
 package no.accelerate.assignment3WebAPIandSpring.services.franchise;
 
 import no.accelerate.assignment3WebAPIandSpring.exceptions.FranchiseNotFoundException;
+import no.accelerate.assignment3WebAPIandSpring.exceptions.MovieNotFoundException;
 import no.accelerate.assignment3WebAPIandSpring.models.Franchise;
 import no.accelerate.assignment3WebAPIandSpring.models.Movie;
 import no.accelerate.assignment3WebAPIandSpring.repositories.FranchiseRepository;
+import no.accelerate.assignment3WebAPIandSpring.repositories.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class FranchiseServiceImpl implements FranchiseService {
     private final Logger logger = LoggerFactory.getLogger(FranchiseServiceImpl.class);
     private final FranchiseRepository franchiseRepository;
+    private final MovieRepository movieRepository;
 
-    public FranchiseServiceImpl(FranchiseRepository franchiseRepository) {
+    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, MovieRepository movieRepository) {
         this.franchiseRepository = franchiseRepository;
+        this.movieRepository = movieRepository;
     }
 
     @Override
@@ -53,5 +59,22 @@ public class FranchiseServiceImpl implements FranchiseService {
     @Override
     public Collection<Movie> getMovie(int franchise_id) {
         return franchiseRepository.findById(franchise_id).get().getMovie();
+    }
+
+    @Override
+    public void updateMovies(int franchise_id, int[] movies){
+        Franchise franchise = franchiseRepository.findById(franchise_id).orElseThrow(() -> new FranchiseNotFoundException(franchise_id));
+
+        List<Movie> validMovies = new ArrayList<>();
+        for (int movie_id : movies){
+            Movie m = movieRepository.findById(movie_id).orElseThrow(() -> new MovieNotFoundException(movie_id));
+            validMovies.add(m);
+        }
+
+        for (Movie m : validMovies){
+            m.setFranchise(franchise);
+        }
+
+        franchiseRepository.save(franchise);
     }
 }

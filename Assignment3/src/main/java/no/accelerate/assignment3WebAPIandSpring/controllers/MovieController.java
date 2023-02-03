@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import no.accelerate.assignment3WebAPIandSpring.exceptions.error.ApiErrorResponse;
 import no.accelerate.assignment3WebAPIandSpring.mappers.MovieMapper;
 import no.accelerate.assignment3WebAPIandSpring.models.Character;
 import no.accelerate.assignment3WebAPIandSpring.models.Movie;
@@ -29,7 +30,7 @@ public class MovieController {
 
 
     //Finding all movies
-    @GetMapping
+    @GetMapping // GET: localhost:8080/api/v1/movie
     @Operation(summary = "Gets all the Movies")
     @ApiResponses(value = {
             @ApiResponse(
@@ -41,14 +42,14 @@ public class MovieController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = @Content
-            )
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
     public ResponseEntity<Collection<Movie>>getAll() {
         return ResponseEntity.ok(movieService.findAll());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("{id}") // GET: localhost:8080/api/v1/movie/1
     @Operation(summary = "Gets a movies based on id")
     @ApiResponses(value = {
             @ApiResponse(
@@ -62,13 +63,14 @@ public class MovieController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad Request",
-                    content = @Content
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) }
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = @Content
-            )
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
     public ResponseEntity findById(@PathVariable int id) {
         return ResponseEntity.ok(
@@ -83,7 +85,7 @@ public class MovieController {
     @Operation(summary = "Adds a new movie")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "Created",
                     content = @Content
             )
@@ -97,11 +99,11 @@ public class MovieController {
     }
 
     //Update Movie
-    @PutMapping("{id}")
+    @PutMapping("{id}") // PUT: localhost:8080/api/v1/movie/1
     @Operation(summary = "Update a Movie with a given id")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "Success",
                     content = @Content
             ),
@@ -125,7 +127,7 @@ public class MovieController {
     @DeleteMapping("{id}")
     @Operation(summary = "Deletes a movie")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
+            @ApiResponse(responseCode = "204",
                     description = "Success",
                     content =  {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Movie.class))
@@ -140,7 +142,7 @@ public class MovieController {
     }
 
    //Character in a movie based a given id.
-    @GetMapping("{id}/character")
+    @GetMapping("{id}/character") //http://localhost:8080/api/v1/movie/1/character
     @Operation(summary = "Get character in a movie based on ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -150,9 +152,11 @@ public class MovieController {
                     }),
             @ApiResponse(responseCode = "404",
                     description = "Not Found",
-                    content = @Content)
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
-    public ResponseEntity <Collection<Character>>getAllMovie(@PathVariable int id) {
+
+    public ResponseEntity <Collection<Character>>getAllCharacter(@PathVariable int id) {
         return ResponseEntity.ok(movieService.findById(id).getCharacter());
     }
 

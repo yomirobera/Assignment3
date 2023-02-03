@@ -32,8 +32,6 @@ public class Franchise {
         return null;
     }
 
-
-
     //Relation between franchise and character..
     /*
     @JsonGetter("movie")
