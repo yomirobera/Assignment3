@@ -1,5 +1,6 @@
 package no.accelerate.assignment3WebAPIandSpring.services.movie;
 
+import no.accelerate.assignment3WebAPIandSpring.exceptions.CharacterNotFoundException;
 import no.accelerate.assignment3WebAPIandSpring.exceptions.MovieNotFoundException;
 import no.accelerate.assignment3WebAPIandSpring.models.Character;
 import no.accelerate.assignment3WebAPIandSpring.models.Movie;
@@ -61,22 +62,31 @@ public class MovieServiceImpl implements MovieService{
 
 
     @Override
-    public Collection<Character> getCharacters(int movieId) {
-        //return CharacterRepository.findById(movieId).get().getCharacters();
-        return null;
+    public Collection<Character> getCharacters(int movie_id) {
+        return movieRepository.findById(movie_id).get().getCharacter();
+
     }
-    /*
-    //Update character for a movie
-    @Override
-    public void updateCharacter(int movieId, int[] character) {
-        Movie mov = movieRepository.findById(movieId).get();
-        Set<Character> characterList = new HashSet<>();
-        for (int id: character) {
-            characterList.add(characterRepository.findById(id).get());
-        }
-        mov.setCharacter(characterList);
-        movieRepository.save(mov);
-    }
+
+    /**
+     * Updates characters in a movie by a movie_id and a list of character ids.
+     * Loops through the character ids and adds them to a set of characters.
+     * Saves the movie and returns the characters.
      */
+    @Override
+    public Set<Character> updateCharacters(int movie_id, int[] characters){
+        Movie movie = movieRepository.findById(movie_id).orElseThrow(() -> new MovieNotFoundException(movie_id));
+
+        Set<Character> validCharacters = new HashSet<>();
+        for (int character_id : characters){
+            Character c = characterRepository.findById(character_id).orElseThrow(() -> new CharacterNotFoundException(character_id));
+            validCharacters.add(c);
+        }
+
+        movie.setCharacter(validCharacters);
+        movieRepository.save(movie);
+
+        return validCharacters;
+    }
+
 
 }

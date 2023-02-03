@@ -1,11 +1,9 @@
-package no.accelerate.assignment3WebAPIandSpring.models.dto;
+package no.accelerate.assignment3WebAPIandSpring.models.dto.Movie;
 
 import lombok.Data;
-import no.accelerate.assignment3WebAPIandSpring.models.Character;
-
-import java.util.List;
 import java.util.Set;
 
+//Data transfer objects
 @Data
 public class MovieDTO {
     private Integer id;
@@ -16,8 +14,8 @@ public class MovieDTO {
     private String director;
     private String picture;
     private String trailer;
-    private int franchise_id;
-    private Set<Character> character;
+    private Integer franchise;
+    private Set<Integer> character;
 
 
 }

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -45,8 +43,9 @@ public class Movie {
     @JoinTable(name = "character_movie",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "character_id"))
-    private List<Character> character;
+    private Set<Character> character;
 
+    /*
     //Data access - cyclic reference
     @JsonGetter("character")
     public List<Integer> jsonGetCharacter() {
@@ -55,6 +54,7 @@ public class Movie {
                     .collect(Collectors.toList());
         return null;
     }
+     */
 
 
 

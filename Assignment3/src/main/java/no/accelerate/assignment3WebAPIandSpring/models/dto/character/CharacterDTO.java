@@ -1,11 +1,10 @@
-package no.accelerate.assignment3WebAPIandSpring.models.dto;
+package no.accelerate.assignment3WebAPIandSpring.models.dto.character;
 
 //Data transfer objects
 
 import lombok.Data;
-import no.accelerate.assignment3WebAPIandSpring.models.Movie;
+import java.util.Set;
 
-import java.util.List;
 
 @Data
 public class CharacterDTO {
@@ -14,5 +13,5 @@ public class CharacterDTO {
     private String fullName;
     private String gender;
     private String picture;
-    private List<Movie> movie;
+    private Set<Integer> movie;
 }

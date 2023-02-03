@@ -2,6 +2,7 @@ package no.accelerate.assignment3WebAPIandSpring.services;
 
 import java.util.Collection;
 
+//Generic CRUD
 public interface CrudService <T,ID> {
     T findById(ID id);
     Collection<T> findAll();

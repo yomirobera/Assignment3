@@ -7,19 +7,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import no.accelerate.assignment3WebAPIandSpring.exceptions.error.ApiErrorResponse;
+import no.accelerate.assignment3WebAPIandSpring.mappers.CharacterMapper;
 import no.accelerate.assignment3WebAPIandSpring.mappers.FranchiseMapper;
+import no.accelerate.assignment3WebAPIandSpring.mappers.MovieMapper;
 import no.accelerate.assignment3WebAPIandSpring.models.Franchise;
-import no.accelerate.assignment3WebAPIandSpring.models.Movie;
-import no.accelerate.assignment3WebAPIandSpring.models.dto.FranchiseDTO;
+import no.accelerate.assignment3WebAPIandSpring.models.dto.Franchise.FranchiseDTO;
+import no.accelerate.assignment3WebAPIandSpring.models.dto.Franchise.FranchisePostDTO;
+import no.accelerate.assignment3WebAPIandSpring.models.dto.Movie.MovieDTO;
 import no.accelerate.assignment3WebAPIandSpring.services.franchise.FranchiseService;
 import no.accelerate.assignment3WebAPIandSpring.services.movie.MovieService;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "api/v1/franchise")
@@ -28,15 +29,21 @@ public class FranchiseController {
     private final MovieService movieService;
     //Franchise Mapper
     private final FranchiseMapper franchiseMapper;
+    private final MovieMapper movieMapper;
+    private final CharacterMapper characterMapper;
 
-    public FranchiseController(FranchiseService franchiseService, MovieService movieService, FranchiseMapper franchiseMapper) {
+    public FranchiseController(FranchiseService franchiseService, MovieService movieService, FranchiseMapper franchiseMapper, MovieMapper movieMapper, CharacterMapper characterMapper) {
 
         this.franchiseService = franchiseService;
         this.movieService = movieService;
         this.franchiseMapper = franchiseMapper;
+        this.movieMapper = movieMapper;
+        this.characterMapper = characterMapper;
     }
 
-    //Get a collection of franchises
+    /**
+     * Gets all characters as DTOs. Returns appropriate response code.
+     */
     @GetMapping //http://localhost:8080/api/v1/franchise
     @Operation(summary = "Gets all the franchises")
     @ApiResponses(value = {
@@ -54,11 +61,16 @@ public class FranchiseController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
-    public ResponseEntity findAll() {
-        return ResponseEntity.ok(franchiseService.findAll());
+    public ResponseEntity getAll() {
+        return ResponseEntity.ok(
+                franchiseMapper.franchiseToFranchiseDTO(
+                        franchiseService.findAll()
+                ));
     }
 
-    //Get a franchise by id
+    /**
+     * Finds a franchise as DTO by its id. Returns appropriate response code.
+     */
     @GetMapping("{id}") // GET: http://localhost:8080/api/v1/franchise/1
     @Operation(summary = "Get a franchise based on id")
     @ApiResponses(value = {
@@ -90,7 +102,9 @@ public class FranchiseController {
 
     }
 
-    //Adding a franchise
+    /**
+     * Adds a new franchise as DTO. Returns appropriate response code.
+     */
     @PostMapping
     @Operation(summary = "Adds a new franchise")
     @ApiResponses(value = {
@@ -99,18 +113,21 @@ public class FranchiseController {
                     description = "Created",
                     content = {@Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = Franchise.class)) //FranchisePostDTO
+                            schema = @Schema(implementation = FranchisePostDTO.class))
                     }),
 
     })
     public ResponseEntity add(@RequestBody Franchise entity) throws URISyntaxException {
         //Add franchise
-        franchiseService.add(entity);
+        franchiseMapper.franchiseToFranchisePostDTO(franchiseService.add(entity));
         URI uri = new URI ("api/v1/franchise/" + entity.getId());
         return ResponseEntity.created(uri).build();
     }
 
-    //Update a franchise
+    /**
+     * Updates a franchise as DTO with a given id. Calls update() from FranchiseService.
+     * Returns appropriate response code.
+     */
     @PutMapping("{id}") // PUT: localhost:8080/api/v1/franchise/1
     @Operation(summary = "Updates a franchise")
     @ApiResponses(value = {
@@ -133,10 +150,14 @@ public class FranchiseController {
         //Avoid invalid request
         if (id != entity.getId())
                 return ResponseEntity.badRequest().build();
-            franchiseService.update(entity);
+        franchiseMapper.franchiseToFranchisePutDTO(franchiseService.update(entity));
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Deletes a franchise by its id. Calls deleteById() from FranchiseService.
+     * Returns appropriate response code.
+     */
     @DeleteMapping("{id}") // DELETE: localhost:8080/api/v1/Franchise/1
     @Operation(summary = "Deletes a franchise")
     @ApiResponses(value = {
@@ -147,27 +168,35 @@ public class FranchiseController {
             @ApiResponse(responseCode = "404",
                         description = "Not Found",
                         content =  @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Franchise.class))),
+                                    schema = @Schema(implementation = FranchiseDTO.class))),
             })
     public ResponseEntity delete(@PathVariable int id) {
         franchiseService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    //Movie in a franchise
+    /**
+     * Gets movies as DTOs from a franchise by the id of the franchise.
+     * Returns appropriate response code.
+     */
     @Operation(summary = "Gets movies in franchise by id")
             @ApiResponse(responseCode = "200",
                         description = "Success",
                         content = {@Content(mediaType = "application/json",
-                                array = @ArraySchema(schema = @Schema(implementation = Movie.class)))
+                                array = @ArraySchema(schema = @Schema(implementation = MovieDTO.class)))
 
     })
     @GetMapping("{id}/movie") // Get: localhost:8080/api/v1/franchise/1/movie
-    public ResponseEntity <Collection<Movie>>getAllMovie(@PathVariable int id) {
-        return ResponseEntity.ok(franchiseService.findById(id).getMovie());
+    public ResponseEntity getAllMovie(@PathVariable int id) {
+        return ResponseEntity.ok(
+                movieMapper.movieToMovieDTO(
+                        franchiseService.findById(id).getMovie()));
     }
 
-    //Updates movie in a franchise
+    /**
+     * Updates movies in a franchise by id.
+     * Returns appropriate response code.
+     */
     @PutMapping("{id}/movie")
     @Operation(summary = "Updates movies in franchise")
     @ApiResponses(value = {
@@ -188,11 +217,17 @@ public class FranchiseController {
             ),
     })
     public ResponseEntity updateMovies(@PathVariable int id, @RequestBody int[] movies){
-        franchiseService.updateMovies(id, movies);
+        movieMapper.movieToMoviePutDTO(franchiseService.updateMovies(id, movies));
         return ResponseEntity.noContent().build();
     }
-    /*
-    @Operation(summary = "Get all characters in franchise")
+
+    /**
+     * Gets characters as DTOs from a franchise by the id of the franchise.
+     * Calls getCharacters() in franchiseService, which loops over movies in a franchise
+     * and characters in a movie to find characters in a franchise.
+     * Returns appropriate response code.
+     */
+    @Operation(summary = "Gets characters from franchise")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -204,19 +239,22 @@ public class FranchiseController {
                     description = "Bad Request",
                     content = @Content(
                             mediaType = "application/json",
-                            schema=@Schema(implementation = Franchise.class)
+                            schema=@Schema(implementation = FranchiseDTO.class)
                     )),
 
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema=@Schema(implementation = Franchise.class)
-                    )),
-
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
 
-     */
-
+    //Gets characters form franchise
+    @GetMapping("{id}/character")
+    public ResponseEntity getCharacters(@PathVariable int id) {
+        return ResponseEntity.ok(
+                characterMapper.characterToCharacterDTO(
+                        franchiseService.getCharacters(id)
+                ));
+    }
 }

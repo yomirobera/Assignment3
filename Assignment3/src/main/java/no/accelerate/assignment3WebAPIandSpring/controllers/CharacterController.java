@@ -8,13 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import no.accelerate.assignment3WebAPIandSpring.exceptions.error.ApiErrorResponse;
 import no.accelerate.assignment3WebAPIandSpring.mappers.CharacterMapper;
 import no.accelerate.assignment3WebAPIandSpring.models.Character;
+import no.accelerate.assignment3WebAPIandSpring.models.dto.character.CharacterDTO;
+import no.accelerate.assignment3WebAPIandSpring.models.dto.character.CharacterPostDTO;
 import no.accelerate.assignment3WebAPIandSpring.services.character.CharacterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
 
 /**
  * @RestController is an annotation to define a RESTful API.
@@ -30,8 +31,9 @@ public class CharacterController {
         this.characterService = characterService;
         this.characterMapper = characterMapper;
     }
-
-    //Get a collection of characters
+    /**
+     * Gets all characters as DTOs. Returns appropriate response code.
+     */
     @GetMapping
     @Operation(summary = "Gets all the Characters")
     @ApiResponses(value = {
@@ -39,7 +41,7 @@ public class CharacterController {
                     responseCode = "200",
                     description = "Success",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Character.class))
+                            schema = @Schema(implementation = CharacterDTO.class))
                     }),
             @ApiResponse(
                     responseCode = "404",
@@ -47,12 +49,16 @@ public class CharacterController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
-    public ResponseEntity<Collection<Character>> getAll() {
-        return ResponseEntity.ok(characterService.findAll());
+    public ResponseEntity getAll() {
+        return ResponseEntity.ok(
+                characterMapper.characterToCharacterDTO(
+                        characterService.findAll()
+                ));
     }
 
-    //Find by id
-
+    /**
+     * Finds a character as DTO by its id. Returns appropriate response code.
+     */
     @GetMapping("{id}")
     @Operation(summary = "Gets a character based on id")
     @ApiResponses(value = {
@@ -60,7 +66,7 @@ public class CharacterController {
                     responseCode = "200",
                     description = "Success",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Character.class))
+                            schema = @Schema(implementation = CharacterDTO.class))
 
                     }
             ),
@@ -77,9 +83,16 @@ public class CharacterController {
                             schema = @Schema(implementation = ApiErrorResponse.class)) })
     })
     public ResponseEntity findById(@PathVariable int id) {
-        return ResponseEntity.ok(characterService.findById(id));
+        return ResponseEntity.ok(
+                characterMapper.characterToCharacterDTO(
+                        characterService.findById(id)
+                ));
+
     }
 
+    /**
+     * Adds a new character as DTO. Returns appropriate response code.
+     */
     //Add character
     @PostMapping
     @Operation(summary = "Adds a new character")
@@ -89,18 +102,21 @@ public class CharacterController {
                     description = "Created",
                     content = {@Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = Character.class))
+                            schema = @Schema(implementation = CharacterPostDTO.class))
                     })
 
     })
     public ResponseEntity add(@RequestBody Character entity) throws URISyntaxException {
         //Add franchise
-        characterService.add(entity);
+        characterMapper.characterToCharacterPostDTO(characterService.add(entity));
         URI uri = new URI ("api/v1/character/" + entity.getId());
         return ResponseEntity.created(uri).build();
     }
 
-    //Update character
+    /**
+     * Updates a character as DTO with a given id. Calls update() from CharacterService.
+     * Returns appropriate response code.
+     */
     @PutMapping("{id}") // PUT: localhost:8080/api/v1/character/1
     @Operation(summary = "Updates a character with a given id")
     @ApiResponses(value = {
@@ -120,13 +136,15 @@ public class CharacterController {
                     content = @Content
             )
     })
-
     public ResponseEntity update(@RequestBody Character entity)  {
-        characterService.update(entity);
+        characterMapper.characterToCharacterPutDTO(characterService.update(entity));
         return ResponseEntity.noContent().build();
     }
 
-    //Delete a character
+    /**
+     * Deletes a character by its id. Calls deleteById() from CharacterService.
+     * Returns appropriate response code.
+     */
     @DeleteMapping("{id}")
     @Operation(summary = "Deletes a franchise")
     @ApiResponses(value = {
@@ -141,7 +159,7 @@ public class CharacterController {
     })
     public ResponseEntity delete(@PathVariable int id) {
         characterService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 }

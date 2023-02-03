@@ -1,13 +1,9 @@
 package no.accelerate.assignment3WebAPIandSpring.models;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -24,7 +20,7 @@ public class Character {
     private String gender;
     private String picture;
 
-
+    /*
     //Data access - cyclic reference
     @JsonGetter("movie")
     public List<Integer> jsonGetMovie() {
@@ -33,10 +29,11 @@ public class Character {
                     .collect(Collectors.toList());
         return null;
     }
+     */
 
     //Many-to-many relationship between character and movie entities
     @ManyToMany(mappedBy ="character")
-    private List<Movie> movie;
+    private Set<Movie> movie;
 
 
 

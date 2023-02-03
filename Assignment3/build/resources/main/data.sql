@@ -24,6 +24,11 @@ INSERT INTO character_movie(movie_id, character_id) VALUES
 (2,2),
 (3,3);
 
+UPDATE movie SET franchise_id = (SELECT id FROM franchise WHERE name = '"Marvel Universe"')
+WHERE title = 'Spider Man';
+
+UPDATE movie SET franchise_id = (SELECT id FROM franchise WHERE name = '"The Lord of the Rings"')
+WHERE title = 'The lord of the rings';
 
 
 

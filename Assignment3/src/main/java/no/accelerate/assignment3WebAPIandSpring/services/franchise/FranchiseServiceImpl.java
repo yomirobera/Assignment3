@@ -2,6 +2,7 @@ package no.accelerate.assignment3WebAPIandSpring.services.franchise;
 
 import no.accelerate.assignment3WebAPIandSpring.exceptions.FranchiseNotFoundException;
 import no.accelerate.assignment3WebAPIandSpring.exceptions.MovieNotFoundException;
+import no.accelerate.assignment3WebAPIandSpring.models.Character;
 import no.accelerate.assignment3WebAPIandSpring.models.Franchise;
 import no.accelerate.assignment3WebAPIandSpring.models.Movie;
 import no.accelerate.assignment3WebAPIandSpring.repositories.FranchiseRepository;
@@ -10,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class FranchiseServiceImpl implements FranchiseService {
@@ -61,11 +60,16 @@ public class FranchiseServiceImpl implements FranchiseService {
         return franchiseRepository.findById(franchise_id).get().getMovie();
     }
 
+    /**
+     * Updates movies in a franchise by franchise_id and a list of movie ids.
+     * Loops through the movie ids and adds them to a set of movies.
+     * Saves the franchise and returns the movies.
+     */
     @Override
-    public void updateMovies(int franchise_id, int[] movies){
+    public Set<Movie> updateMovies(int franchise_id, int[] movies){
         Franchise franchise = franchiseRepository.findById(franchise_id).orElseThrow(() -> new FranchiseNotFoundException(franchise_id));
 
-        List<Movie> validMovies = new ArrayList<>();
+        Set<Movie> validMovies = new HashSet<>();
         for (int movie_id : movies){
             Movie m = movieRepository.findById(movie_id).orElseThrow(() -> new MovieNotFoundException(movie_id));
             validMovies.add(m);
@@ -76,5 +80,30 @@ public class FranchiseServiceImpl implements FranchiseService {
         }
 
         franchiseRepository.save(franchise);
+
+        return validMovies;
+    }
+
+    @Override
+    public Set<Movie> getAllMovies(int franchise_id) {
+        Franchise franchise = franchiseRepository.findById(franchise_id).orElseThrow(() -> new FranchiseNotFoundException(franchise_id));
+        return franchise.getMovie();
+    }
+
+
+    /**
+     * Gets all characters in a franchise by franchise_id.
+     * Calls getAllMovies() to get all movies in a franchise, and then loops through
+     * the movies and adds all their characters to a list, and returns it.
+     */
+    public List<Character> getCharacters(int franchise_id){
+        Set<Movie> movies = getAllMovies(franchise_id);
+        List<Character> characters = new ArrayList<>();
+
+        for (Movie m : movies){
+            characters.addAll(m.getCharacter());
+        }
+
+        return characters;
     }
 }
